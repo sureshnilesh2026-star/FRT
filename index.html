@@ -234,6 +234,17 @@
           <div class="confidence">Confidence: ${confidence}</div>
         `;
         resultMsg.style.display = "block";
+
+        // After 5 seconds: redirect if MATCHED, otherwise refresh
+        if (isMatched) {
+          setTimeout(() => {
+            window.location.href = "https://eva-face-recognition.vercel.app";
+          }, 5000);
+        } else {
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000);
+        }
       })
       .catch(err => {
         console.error("Webhook error:", err);
@@ -250,6 +261,11 @@
           <div class="status">Could not process your photo</div>
         `;
         resultMsg.style.display = "block";
+
+        // Refresh page after 5 seconds on error
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
       });
     }
 
