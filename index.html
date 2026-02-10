@@ -163,14 +163,25 @@
     let stream;
 
     const webhookURL = "https://eva-ramanik.app.n8n.cloud/webhook/face-match";
+    const AGENT_ID = "agent_3701kh0eb96rf34vc2rgyew10wjk";
 
-    // NO AUDIO — video only
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-      .then(s => {
-        stream = s;
+    // Auto-start camera on page load
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
         document.getElementById("preview").srcObject = stream;
-      })
-      .catch(() => alert("Camera access denied"));
+      } catch (err) {
+        console.error("Camera error:", err);
+        if (err.name === "NotAllowedError") {
+          alert("Camera permission denied. Please allow camera access and reload.");
+        } else if (err.name === "NotReadableError") {
+          alert("Camera is in use by another app. Please close it and reload.");
+        } else {
+          alert("Unable to access camera: " + err.message);
+        }
+      }
+    }
+    startCamera();
 
     function capturePhoto() {
       const video = document.getElementById("preview");
@@ -215,7 +226,7 @@
       .then(data => {
         console.log("Webhook response:", data);
 
-        const vars = data.conversation_initiation_data?.variables || {};
+        const vars = data.data || {};
         const name = vars.name || "Unknown";
         const status = vars.status || "UNKNOWN";
         const confidence = vars.confidence || "N/A";
@@ -237,8 +248,12 @@
 
         // After 5 seconds: redirect if MATCHED, otherwise refresh
         if (isMatched) {
+          const elName = encodeURIComponent(name);
+          const elStatus = encodeURIComponent(status);
+          const elConfidence = encodeURIComponent(confidence);
+          const evaUrl = `https://evafrt.vercel.app/?name=${elName}&status=${elStatus}&confidence=${elConfidence}`;
           setTimeout(() => {
-            window.location.href = "https://evafrt.vercel.app/";
+            window.location.href = evaUrl;
           }, 5000);
         } else {
           setTimeout(() => {
