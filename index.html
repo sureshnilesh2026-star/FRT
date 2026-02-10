@@ -237,8 +237,12 @@
 
         // After 5 seconds: redirect if MATCHED, otherwise refresh
         if (isMatched) {
+          const elName = encodeURIComponent(name);
+          const elStatus = encodeURIComponent(status);
+          const elConfidence = encodeURIComponent(confidence);
+          const evaUrl = `https://evafrt.vercel.app/?name=${elName}&status=${elStatus}&confidence=${elConfidence}`;
           setTimeout(() => {
-            window.location.href = "https://evafrt.vercel.app/";
+            window.location.href = evaUrl;
           }, 5000);
         } else {
           setTimeout(() => {
