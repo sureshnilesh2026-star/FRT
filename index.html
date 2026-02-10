@@ -224,9 +224,9 @@
       })
       .then(res => res.json())
       .then(data => {
-        console.log("Webhook response:", data);
+        console.log("Webhook response:", JSON.stringify(data, null, 2));
 
-        const vars = data.data || {};
+        const vars = data.conversation_initiation_data?.variables || {};
         const name = vars.name || "Unknown";
         const status = vars.status || "UNKNOWN";
         const confidence = vars.confidence || "N/A";
